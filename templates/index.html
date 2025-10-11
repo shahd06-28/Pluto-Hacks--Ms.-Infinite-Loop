@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Women in Tech — Pixel Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body{
+    margin:0;
+    background:radial-gradient(circle at top,#fcd6dc,#f6c5cf);
+    font-family:"Pixelify Sans",sans-serif;
+    color:#1f2a44;
+    image-rendering:pixelated;
+  }
+  .wrap{max-width:1100px;margin:32px auto;padding:0 16px}
+  .topbar{display:flex;justify-content:space-between;align-items:center}
+  .brand{
+    background:#ffd7df;border:4px solid #1f2a44;border-radius:12px;padding:8px 16px;
+    font-weight:600;box-shadow:6px 6px 0 rgba(31,42,68,.25)
+  }
+  .searchbox{display:flex;align-items:center;gap:8px}
+  #q{font:600 18px "Pixelify Sans";border:4px solid #1f2a44;border-radius:12px;padding:10px 14px;width:340px}
+  .btn-icon{border:4px solid #1f2a44;border-radius:10px;background:#fff;width:52px;height:44px;display:grid;place-items:center;cursor:pointer}
+  .btn-icon img{width:28px;height:28px;image-rendering:pixelated}
+  .grid{margin-top:32px;display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+  .card{background:#ffd7df;border:6px solid #1f2a44;border-radius:18px;padding:22px;text-align:center;cursor:pointer;transition:transform .05s}
+  .card:active{transform:translate(2px,2px)}
+  .cta{margin-top:12px;background:#fff;border:4px solid #1f2a44;border-radius:10px;display:inline-block;padding:6px 10px}
+  .char{position:fixed;bottom:28px;right:36px;display:flex;align-items:flex-end;gap:10px}
+  .bubble{background:#fff;border:4px solid #1f2a44;border-radius:12px;padding:10px 14px;min-width:140px;text-align:center;font-size:22px;font-weight:600}
+  .bubble::after{content:"";position:absolute;right:30px;bottom:-16px;width:16px;height:16px;background:#fff;border-left:4px solid #1f2a44;border-bottom:4px solid #1f2a44;transform:rotate(45deg)}
+  .sprite{width:120px}
+  .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);align-items:center;justify-content:center}
+  .modal{background:#fff;border:6px solid #1f2a44;border-radius:16px;padding:18px;max-width:720px;width:90%;max-height:80vh;overflow:auto;box-shadow:10px 10px 0 rgba(31,42,68,.3)}
+  .article{border:4px solid #1f2a44;border-radius:12px;padding:10px;margin:10px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">💡 Women in Tech</div>
+    <div class="searchbox">
+      <input id="q" placeholder="Search topic…">
+      <button id="searchBtn" class="btn-icon"><img id="searchIcon" src="{{ url_for('static', filename='search_1.png') }}" alt=""></button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card" data-bucket="past"><h3>🌺 Past</h3><div class="cta">See more</div></div>
+    <div class="card" data-bucket="present"><h3>🌼 Present</h3><div class="cta">See more</div></div>
+    <div class="card" data-bucket="future"><h3>🌻 Future</h3><div class="cta">See more</div></div>
+  </div>
+</div>
+
+<div class="char">
+  <div class="bubble" id="bubble">Hello!</div>
+  <img id="girl" class="sprite" src="{{ url_for('static', filename='girl_1.png') }}" alt="">
+</div>
+
+<div id="backdrop" class="modal-backdrop">
+  <div class="modal">
+    <h2 id="modalTitle"></h2>
+    <div id="modalBody">Loading…</div>
+  </div>
+</div>
+
+<script>
+const phrases=["Hello!","مرحبًا","안녕하세요","Hola","こんにちは","Bonjour","你好","Привет","Bonjou","नमस्ते","نمستے"];
+let i=0;
+setInterval(()=>{i=(i+1)%phrases.length;document.getElementById("bubble").textContent=phrases[i];},3000);
+
+let f=1;
+setInterval(()=>{f=f===1?2:1;document.getElementById("girl").src=`/static/girl_${f}.png`;},600);
+
+const searchBtn=document.getElementById("searchBtn");
+const searchIcon=document.getElementById("searchIcon");
+searchBtn.onclick=()=>doSearch();
+
+async function doSearch(bucket=null){
+  const query=document.getElementById("q").value.trim();
+  if(!query)return;
+  searchIcon.src="/static/search_2.png";
+  const res=await fetch("/articles",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query,bucket})});
+  const data=await res.json();
+  searchIcon.src="/static/search_1.png";
+  if(bucket) renderModal(data,bucket);
+}
+
+document.querySelectorAll(".card").forEach(c=>c.onclick=()=>{
+  const b=c.dataset.bucket;
+  document.getElementById("modalTitle").textContent=b.charAt(0).toUpperCase()+b.slice(1);
+  document.getElementById("modalBody").innerHTML="Loading…";
+  document.getElementById("backdrop").style.display="flex";
+  doSearch(b);
+});
+document.getElementById("backdrop").onclick=e=>{
+  if(e.target.id==="backdrop")e.target.style.display="none";
+};
+
+function renderModal(data,bucket){
+  const mb=document.getElementById("modalBody");
+  const arr=data.articles||[];
+  mb.innerHTML=arr.length?arr.map(a=>`<div class='article'><b>${a.title}</b><div>${a.snippet||""}</div><a href='${a.link}' target='_blank'>🔗 Link</a></div>`).join(""):`<div>No results.</div>`;
+}
+</script>
+</body>
+</html>
