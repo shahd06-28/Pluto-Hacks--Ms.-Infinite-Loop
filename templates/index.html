@@ -123,7 +123,7 @@ body{
     </div>
     <div class="search">
       <input id="query" placeholder="Search">
-      <button id="searchBtn"><img src="{{ url_for('static', filename='Search 1.png') }}" alt="🔍"></button>
+      <button id="searchBtn"><img src="{{ url_for('static', filename='Search_Icon.png') }}" alt="🔍"></button>
     </div>
   </div>
 
@@ -161,7 +161,7 @@ body{
   <!-- Character -->
   <div class="character">
     <div class="speech" id="speechText">Hello!</div>
-    <img id="girlSprite" class="girl" src="{{ url_for('static', filename='Pixel-1.png 1.png') }}" alt="Girl">
+    <img id="girlSprite" class="girl" src="{{ url_for('static', filename='Pixel-1.png') }}" alt="Girl">
   </div>
 
   <!-- Modal -->
@@ -182,11 +182,11 @@ body{
     document.getElementById("speechText").textContent=phrases[i];
   },3000);
 
-  // Girl animation
+  // Girl animation (fixed filenames)
   let f=1;
   setInterval(()=>{
     f=f===1?2:1;
-    document.getElementById("girlSprite").src=`/static/Pixel-${f}.png 1.png`;
+    document.getElementById("girlSprite").src=`/static/Pixel-${f}.png`;
   },600);
 
   // Modal handlers
@@ -237,5 +237,6 @@ body{
 </script>
 </body>
 </html>
+
 
 
