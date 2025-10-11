@@ -62,10 +62,14 @@ h1 {
   background: #f9d8df;
   border: 3px solid #283046;
   border-radius: 16px;
-  width: 200px;
+  width: 220px;
   padding: 15px;
   text-align: center;
   box-shadow: 6px 6px 0 rgba(40,48,70,0.3);
+  transition: transform 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-5px);
 }
 .card h3 { color: #283046; }
 .card button {
@@ -78,6 +82,13 @@ h1 {
   cursor: pointer;
 }
 .card button:hover { background: #47516d; }
+
+.card img {
+  width: 120px;
+  height: auto;
+  image-rendering: pixelated;
+  margin-bottom: 10px;
+}
 
 #results {
   margin-top: 40px;
@@ -92,17 +103,6 @@ h1 {
 }
 .article { margin-bottom: 15px; text-align: left; }
 .article b { color: #283046; }
-
-/* Pixel Girl bottom-right placement */
-#pixel-girl {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 120px;
-  image-rendering: pixelated;
-  pointer-events: none;
-  z-index: 9999;
-}
 </style>
 </head>
 <body>
@@ -121,25 +121,26 @@ h1 {
   <div class="cards">
     <div class="card">
       <h3>Past</h3>
+      <img src="{{ url_for('static', filename='Past.gif') }}" alt="Past Girl">
       <button onclick="fetchArticles('past')">Explore Past</button>
     </div>
+
     <div class="card">
       <h3>Present</h3>
+      <img src="{{ url_for('static', filename='Present.gif') }}" alt="Present Girl">
       <button onclick="fetchArticles('present')">Explore Present</button>
     </div>
+
     <div class="card">
       <h3>Future</h3>
+      <img src="{{ url_for('static', filename='Future.gif') }}" alt="Future Girl">
       <button onclick="fetchArticles('future')">Explore Future</button>
     </div>
   </div>
 
   <div id="results"><em>Click a category or use the search bar above 💡</em></div>
 
-  <!-- Pixel Girl Idle Animation -->
-  <img id="pixel-girl" src="{{ url_for('static', filename='Girl_Idle_pose1.png') }}" alt="Pixel Girl">
-
   <script>
-  // --- Article Logic ---
   async function fetchArticles(bucket){
     const res = await fetch("/articles", {
       method: "POST",
@@ -174,17 +175,6 @@ h1 {
           <small>${a.snippet}</small>
         </div>`).join("");
   }
-
-  // --- Pixel Girl Idle Animation Logic ---
-  let currentPose = 1;
-  setInterval(() => {
-    const girl = document.getElementById("pixel-girl");
-    if (!girl) return;
-    currentPose = currentPose === 1 ? 2 : 1;
-    girl.src = currentPose === 1
-      ? "{{ url_for('static', filename='Girl_Idle_pose1.png') }}"
-      : "{{ url_for('static', filename='Girl_Idle_pose2.png') }}";
-  }, 600); // change every 0.6 seconds
   </script>
 </body>
 </html>
