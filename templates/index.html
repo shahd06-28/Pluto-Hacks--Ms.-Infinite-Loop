@@ -131,6 +131,17 @@ h1 .logo {
 }
 .article { margin-bottom: 15px; text-align: left; }
 .article b { color: #283046; }
+
+/* Pixel girl bottom-right */
+#pixel-girl {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 120px;
+  image-rendering: pixelated;
+  pointer-events: none;
+  z-index: 9999;
+}
 </style>
 </head>
 <body>
@@ -173,7 +184,11 @@ h1 .logo {
 
   <div id="results"><em>Click a category or use the search bar above 💡</em></div>
 
+  <!-- Pixel Girl Idle Animation -->
+  <img id="pixel-girl" src="{{ url_for('static', filename='Girl_Idle_pose1.png') }}" alt="Pixel Girl">
+
   <script>
+  // Article logic
   async function fetchArticles(bucket){
     const res = await fetch("/articles", {
       method: "POST",
@@ -208,9 +223,22 @@ h1 .logo {
           <small>${a.snippet}</small>
         </div>`).join("");
   }
+
+  // Idle animation logic
+  let currentPose = 1;
+  setInterval(() => {
+    const girl = document.getElementById("pixel-girl");
+    if (!girl) return;
+    currentPose = currentPose === 1 ? 2 : 1;
+    girl.src = currentPose === 1
+      ? "{{ url_for('static', filename='Girl_Idle_pose1.png') }}"
+      : "{{ url_for('static', filename='Girl_Idle_pose2.png') }}";
+  }, 600); // switch every 0.6 seconds
   </script>
 </body>
 </html>
+
+
 
 
 
