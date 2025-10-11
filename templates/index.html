@@ -5,110 +5,237 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Ms. Infinite Loop 🌸</title>
 <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+
 <style>
-  body{
-    margin:0;
-    background:url("{{ url_for('static', filename='Website_BG.png') }}") no-repeat center center fixed;
-    background-size:cover;
-    font-family:"Pixelify Sans",sans-serif;
-    color:#1f2a44;
-    image-rendering:pixelated;
-    overflow-x:hidden;
-  }
-  .center-frame{
-    position:absolute;
-    top:80px;
-    left:50%;
-    transform:translateX(-50%);
-    text-align:center;
-  }
-  .center-frame img{max-width:500px;display:block;margin:auto;}
-  .generate-btn{
-    display:block;
-    margin:20px auto;
-    width:250px;
-    cursor:pointer;
-  }
-  .cards{
-    display:flex;
-    justify-content:center;
-    gap:60px;
-    margin-top:420px;
-  }
-  .card{position:relative;text-align:center;cursor:pointer;}
-  .card img{width:180px;display:block;margin:auto;}
-  .char{
-    position:fixed;
-    bottom:28px;
-    right:36px;
-    display:flex;
-    align-items:flex-end;
-    gap:10px;
-  }
-  .bubble{
-    position:relative;
-    width:130px;
-    height:50px;
-  }
-  .bubble img{
-    width:100%;
-    height:100%;
-    object-fit:contain;
-  }
-  .sprite{width:120px;}
+body{
+  margin:0;
+  background:#f9d8df;
+  font-family:"Pixelify Sans",sans-serif;
+  color:#1f2a44;
+  image-rendering:pixelated;
+  overflow-x:hidden;
+}
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:25px 50px;
+}
+.search{display:flex;align-items:center;gap:6px;}
+.search input{
+  background:url('{{ url_for("static", filename="Search_bar.png") }}') no-repeat center;
+  background-size:contain;
+  border:none;height:38px;width:200px;
+  font-family:"Pixelify Sans";text-align:center;
+  outline:none;color:#1f2a44;
+}
+.search button{background:none;border:none;cursor:pointer;}
+.search button img{height:28px;image-rendering:pixelated;}
+
+.brand img{height:25px;image-rendering:pixelated;}
+
+.desc{
+  position:relative;
+  text-align:center;
+  margin-top:10px;
+}
+.desc img.frame{
+  width:520px;
+  image-rendering:pixelated;
+}
+.desc img.text{
+  position:absolute;
+  top:25%;
+  left:50%;
+  transform:translateX(-50%);
+  width:420px;
+  image-rendering:pixelated;
+}
+
+.generate-btn{
+  background:none;border:none;cursor:pointer;
+  display:block;margin:20px auto 40px auto;
+}
+.generate-btn img{
+  width:210px;image-rendering:pixelated;
+}
+
+.cards{
+  display:flex;justify-content:center;gap:60px;margin-top:20px;
+}
+.card{
+  position:relative;text-align:center;
+}
+.card img{image-rendering:pixelated;}
+.card img.char{width:140px;}
+.card img.button{width:190px;margin-top:6px;cursor:pointer;transition:transform .05s;}
+.card img.button:active{transform:translate(2px,2px);}
+.label{font-weight:600;font-size:18px;margin-bottom:6px;}
+
+.character{
+  position:fixed;bottom:30px;right:40px;
+  display:flex;align-items:flex-end;gap:10px;
+}
+.speech{
+  background:#fff;border:4px solid #1f2a44;
+  border-radius:10px;padding:8px 14px;
+  font-size:18px;font-weight:600;position:relative;
+}
+.speech::after{
+  content:"";position:absolute;right:15px;bottom:-10px;
+  width:12px;height:12px;background:#fff;
+  border-left:4px solid #1f2a44;border-bottom:4px solid #1f2a44;
+  transform:rotate(45deg);
+}
+.girl{width:110px;image-rendering:pixelated;}
+
+/* Modal */
+.modal-backdrop{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.4);
+  align-items:center;justify-content:center;
+}
+.modal{
+  background:#fff;
+  border:6px solid #1f2a44;
+  border-radius:16px;
+  padding:18px;
+  max-width:700px;width:90%;
+  max-height:80vh;overflow:auto;
+  box-shadow:10px 10px 0 rgba(31,42,68,.3);
+  text-align:left;
+}
+.article{
+  border:4px solid #1f2a44;
+  border-radius:12px;
+  padding:10px;margin:10px 0;
+}
+.article a{color:#1f2a44;text-decoration:none;}
+.close-btn{
+  float:right;cursor:pointer;font-weight:700;
+}
 </style>
 </head>
+
 <body>
-
-<div class="center-frame">
-  <img src="{{ url_for('static', filename='Description_frame.png') }}" alt="Frame">
-  <img src="{{ url_for('static', filename='Description_text.png') }}" alt="Text" style="margin-top:-250px;">
-  <img class="generate-btn" src="{{ url_for('static', filename='Gen_article_button.png') }}" id="searchBtn" alt="Generate">
-</div>
-
-<div class="cards">
-  <div class="card" data-bucket="past">
-    <img src="{{ url_for('static', filename='Past.png') }}" alt="Past">
+  <!-- Header -->
+  <div class="topbar">
+    <div class="brand">
+      <img src="{{ url_for('static', filename='Group.png') }}" alt="Logo">
+    </div>
+    <div class="search">
+      <input id="query" placeholder="Search">
+      <button id="searchBtn"><img src="{{ url_for('static', filename='Search 1.png') }}" alt="🔍"></button>
+    </div>
   </div>
-  <div class="card" data-bucket="present">
-    <img src="{{ url_for('static', filename='Present.png') }}" alt="Present">
-  </div>
-  <div class="card" data-bucket="future">
-    <img src="{{ url_for('static', filename='Future.png') }}" alt="Future">
-  </div>
-</div>
 
-<div class="char">
-  <div class="bubble"><img id="phrase" src="{{ url_for('static', filename='Hello_phrase.png') }}" alt=""></div>
-  <img id="girl" class="sprite" src="{{ url_for('static', filename='Pixel-1.png 1.png') }}" alt="">
-</div>
+  <!-- Description -->
+  <div class="desc">
+    <img class="frame" src="{{ url_for('static', filename='Description_BG.png') }}" alt="Frame">
+    <img class="text" src="{{ url_for('static', filename='Description_text.png') }}" alt="Text">
+  </div>
+
+  <button id="generateBtn" class="generate-btn">
+    <img src="{{ url_for('static', filename='Gen_article_button.png') }}" alt="Generate Articles">
+  </button>
+
+  <!-- Cards -->
+  <div class="cards">
+    <div class="card" data-bucket="past">
+      <div class="label">Past</div>
+      <img class="char" src="{{ url_for('static', filename='Past.png.png') }}" alt="Past Character">
+      <img class="button" src="{{ url_for('static', filename='Past_button.png') }}" alt="Past Button">
+    </div>
+
+    <div class="card" data-bucket="present">
+      <div class="label">Present</div>
+      <img class="char" src="{{ url_for('static', filename='Present.png.png') }}" alt="Present Character">
+      <img class="button" src="{{ url_for('static', filename='Present_button.png') }}" alt="Present Button">
+    </div>
+
+    <div class="card" data-bucket="future">
+      <div class="label">Future</div>
+      <img class="char" src="{{ url_for('static', filename='Future.png.png') }}" alt="Future Character">
+      <img class="button" src="{{ url_for('static', filename='Future_button.png') }}" alt="Future Button">
+    </div>
+  </div>
+
+  <!-- Character -->
+  <div class="character">
+    <div class="speech" id="speechText">Hello!</div>
+    <img id="girlSprite" class="girl" src="{{ url_for('static', filename='Pixel-1.png 1.png') }}" alt="Girl">
+  </div>
+
+  <!-- Modal -->
+  <div id="backdrop" class="modal-backdrop">
+    <div class="modal">
+      <span class="close-btn" onclick="closeModal()">✖</span>
+      <h2 id="modalTitle">Results</h2>
+      <div id="modalBody">Loading…</div>
+    </div>
+  </div>
 
 <script>
-const phrases=[
-  "Hello_phrase.png","French_phrase.png","Spanish_phrase.png","Chinese_phrase.png",
-  "Hindi_phrase.png","Korean_phrase.png","Japanese_phrase.png","Russian_phrase.png",
-  "Creole_phrase.png","Urdu_phrase.png"
-];
-let i=0;
-setInterval(()=>{
-  i=(i+1)%phrases.length;
-  document.getElementById("phrase").src=`/static/${phrases[i]}`;
-},3000);
+  // Speech rotation
+  const phrases=["Hello!","مرحبًا","안녕하세요","Hola","こんにちは","Bonjour","你好","Привет","Bonjou","नमस्ते","نمستے"];
+  let i=0;
+  setInterval(()=>{
+    i=(i+1)%phrases.length;
+    document.getElementById("speechText").textContent=phrases[i];
+  },3000);
 
-let f=1;
-setInterval(()=>{
-  f=f===1?2:1;
-  document.getElementById("girl").src=`/static/Pixel-${f}.png 1.png`;
-},800);
+  // Girl animation
+  let f=1;
+  setInterval(()=>{
+    f=f===1?2:1;
+    document.getElementById("girlSprite").src=`/static/Pixel-${f}.png 1.png`;
+  },600);
 
-document.getElementById("searchBtn").onclick=()=>doSearch();
+  // Modal handlers
+  function openModal(title,html){
+    document.getElementById("modalTitle").textContent=title;
+    document.getElementById("modalBody").innerHTML=html;
+    document.getElementById("backdrop").style.display="flex";
+  }
+  function closeModal(){
+    document.getElementById("backdrop").style.display="none";
+  }
 
-async function doSearch(bucket=null){
-  const res=await fetch("/articles",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query:"women in tech",bucket})});
-  const data=await res.json();
-  console.log(data);
-}
+  // Fetch results
+  async function fetchArticles(bucket,query){
+    const res=await fetch("/articles",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({query,bucket})
+    });
+    const data=await res.json();
+    if(data.error) return openModal("Error",data.error);
+    const html=(data.articles||[]).map(a=>
+      `<div class='article'>
+         <b>${a.title}</b><br>
+         <div>${a.snippet||""}</div>
+         <a href='${a.link}' target='_blank'>🔗 Link</a>
+       </div>`).join("")||"<div>No results.</div>";
+    openModal(bucket.charAt(0).toUpperCase()+bucket.slice(1),html);
+  }
+
+  // Buttons
+  document.querySelectorAll(".card img.button").forEach(btn=>{
+    btn.onclick=()=>{
+      const bucket=btn.parentElement.dataset.bucket;
+      fetchArticles(bucket,bucket);
+    };
+  });
+
+  document.getElementById("generateBtn").onclick=()=>{
+    const q=document.getElementById("query").value.trim()||"women in tech";
+    fetchArticles("all",q);
+  };
+
+  document.getElementById("searchBtn").onclick=()=>{
+    const q=document.getElementById("query").value.trim();
+    if(q) fetchArticles("search",q);
+  };
 </script>
 </body>
 </html>
+
 
