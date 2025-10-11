@@ -1,94 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ms. Infinite Loop 🌸</title>
+<style>
+body {
+  font-family: "Pixelify Sans", monospace;
+  background: linear-gradient(#f9d8df, #fce4ec);
+  color: #333;
+  margin: 0;
+  padding: 40px;
+  text-align: center;
+}
+h1 {
+  font-size: 28px;
+  color: #283046;
+  margin-bottom: 10px;
+}
+.description-box {
+  background: #fff;
+  border: 4px solid #283046;
+  border-radius: 16px;
+  display: inline-block;
+  padding: 20px 30px;
+  margin: 25px 0 35px 0;
+  max-width: 600px;
+  box-shadow: 6px 6px 0 rgba(40,48,70,0.3);
+}
+.search-bar {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.search-bar input {
+  padding: 10px 15px;
+  border: 2px solid #283046;
+  border-radius: 10px;
+  width: 220px;
+  font-family: inherit;
+  background: #fff;
+}
+.search-bar button {
+  background: #283046;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.search-bar button:hover { background: #47516d; }
+
+.cards {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin-top: 20px;
+}
+.card {
+  background: #f9d8df;
+  border: 3px solid #283046;
+  border-radius: 16px;
+  width: 200px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 6px 6px 0 rgba(40,48,70,0.3);
+}
+.card h3 { color: #283046; }
+.card button {
+  margin-top: 10px;
+  background: #283046;
+  color: #fff;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.card button:hover { background: #47516d; }
+
+#results {
+  margin-top: 40px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #fff;
+  border: 3px solid #283046;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 8px 8px 0 rgba(40,48,70,0.2);
+}
+.article { margin-bottom: 15px; text-align: left; }
+.article b { color: #283046; }
+</style>
+</head>
 <body>
-  <!-- Header -->
-  <div class="topbar">
-    <div class="brand">
-      <img src="{{ url_for('static', filename='final_assets/Group.png') }}" alt="Logo">
-    </div>
-    <div class="search">
-      <input id="query" placeholder="Search">
-      <button id="searchBtn">
-        <img src="{{ url_for('static', filename='final_assets/Search 1.png') }}" alt="🔍">
-      </button>
-    </div>
+  <h1>Ms. Infinite Loop 🌸</h1>
+
+  <div class="description-box">
+    <p><b>Ready to discover some brilliance?</b><br>
+    Ask me a keyword or click the button to uncover sparkling stories of women in tech from the <b>Past</b>, <b>Present</b>, and <b>Future!</b></p>
   </div>
 
-  <!-- Description -->
-  <div class="desc">
-    <img class="frame" src="{{ url_for('static', filename='final_assets/Description_BG.png') }}" alt="Frame">
-    <img class="text" src="{{ url_for('static', filename='final_assets/Description_text.png') }}" alt="Text">
+  <div class="search-bar">
+    <input id="keyword" placeholder="Type a keyword (e.g. AI, code)">
+    <button onclick="searchArticles()">Search</button>
   </div>
 
-  <!-- Generate button -->
-  <button id="generateBtn" class="generate-btn">
-    <img src="{{ url_for('static', filename='final_assets/Gen_article_button.png') }}" alt="Generate Articles">
-  </button>
-
-  <!-- Cards -->
   <div class="cards">
-    <div class="card" data-bucket="past">
-      <div class="label">Past</div>
-      <img class="char" src="{{ url_for('static', filename='final_assets/Past.png') }}" alt="Past Character">
-      <img class="button" src="{{ url_for('static', filename='final_assets/Past_button.png') }}" alt="Past Button">
+    <div class="card">
+      <h3>Past</h3>
+      <button onclick="fetchArticles('past')">Explore Past</button>
     </div>
-
-    <div class="card" data-bucket="present">
-      <div class="label">Present</div>
-      <img class="char" src="{{ url_for('static', filename='final_assets/Present.png') }}" alt="Present Character">
-      <img class="button" src="{{ url_for('static', filename='final_assets/Present_button.png') }}" alt="Present Button">
+    <div class="card">
+      <h3>Present</h3>
+      <button onclick="fetchArticles('present')">Explore Present</button>
     </div>
-
-    <div class="card" data-bucket="future">
-      <div class="label">Future</div>
-      <img class="char" src="{{ url_for('static', filename='final_assets/Future.png') }}" alt="Future Character">
-      <img class="button" src="{{ url_for('static', filename='final_assets/Future_button.png') }}" alt="Future Button">
+    <div class="card">
+      <h3>Future</h3>
+      <button onclick="fetchArticles('future')">Explore Future</button>
     </div>
   </div>
 
-  <!-- Character -->
-  <div class="character">
-    <div class="speech" id="speechText">Hello!</div>
-    <img id="girlSprite" class="girl" src="{{ url_for('static', filename='final_assets/Pixel-1.png') }}" alt="Girl">
-  </div>
-
-  <!-- Modal -->
-  <div id="backdrop" class="modal-backdrop">
-    <div class="modal">
-      <span class="close-btn" onclick="closeModal()">✖</span>
-      <h2 id="modalTitle">Results</h2>
-      <div id="modalBody">Loading…</div>
-    </div>
-  </div>
+  <div id="results"><em>Click a category or use the search bar above 💡</em></div>
 
   <script>
-    // Rotate speech phrases
-    const phrases=["Hello!","مرحبًا","안녕하세요","Hola","こんにちは","Bonjour","你好","Привет","Bonjou","नमस्ते","نمستے"];
-    let i=0;
-    setInterval(()=>{i=(i+1)%phrases.length;document.getElementById("speechText").textContent=phrases[i];},3000);
-
-    // Girl idle animation
-    let f=1;
-    setInterval(()=>{f=f===1?2:1;document.getElementById("girlSprite").src=`/static/final_assets/Pixel-${f}.png`;},600);
-
-    // Modal functions
-    function openModal(title,html){document.getElementById("modalTitle").textContent=title;document.getElementById("modalBody").innerHTML=html;document.getElementById("backdrop").style.display="flex";}
-    function closeModal(){document.getElementById("backdrop").style.display="none";}
-
-    // Fetch articles
-    async function fetchArticles(bucket,query){
-      const res=await fetch("/articles",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query,bucket})});
-      const data=await res.json();
-      if(data.error) return openModal("Error",data.error);
-      const html=(data.articles||[]).map(a=>`<div class='article'><b>${a.title}</b><br><div>${a.snippet||""}</div><a href='${a.link}' target='_blank'>🔗 Link</a></div>`).join("")||"<div>No results.</div>";
-      openModal(bucket.charAt(0).toUpperCase()+bucket.slice(1),html);
-    }
-
-    // Button handlers
-    document.querySelectorAll(".card img.button").forEach(btn=>{
-      btn.onclick=()=>{const bucket=btn.parentElement.dataset.bucket;fetchArticles(bucket,bucket);}
+  async function fetchArticles(bucket){
+    const res = await fetch("/articles", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({bucket})
     });
-    document.getElementById("generateBtn").onclick=()=>{const q=document.getElementById("query").value.trim()||"women in tech";fetchArticles("all",q);}
-    document.getElementById("searchBtn").onclick=()=>{const q=document.getElementById("query").value.trim();if(q) fetchArticles("search",q);}
+    const data = await res.json();
+    renderResults(data, bucket);
+  }
+
+  async function searchArticles(){
+    const query = document.getElementById("keyword").value.trim();
+    const res = await fetch("/articles", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({bucket: "all", query})
+    });
+    const data = await res.json();
+    renderResults(data, "search");
+  }
+
+  function renderResults(data, bucket){
+    const results = document.getElementById("results");
+    if(!data.length){
+      results.innerHTML = `<p><b>No results found for "${bucket}"</b></p>`;
+      return;
+    }
+    results.innerHTML = `<h3>Results for ${bucket}</h3>` +
+      data.map(a=>`
+        <div class="article">
+          <b>${a.title}</b><br>
+          <small>${a.snippet}</small>
+        </div>`).join("");
+  }
   </script>
 </body>
+</html>
+
 
 
