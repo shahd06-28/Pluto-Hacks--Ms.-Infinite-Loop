@@ -13,7 +13,7 @@ SERP_API_KEY = os.getenv("SERP_API_KEY", "8626734a396ccad9ac95f5d04b9d9dae0277d5
 # GUI setup
 root = tk.Tk()
 root.title("Women in Tech - Article Explorer")
-root.geometry("1000x700")  # Bigger window
+root.geometry("1440x1024")  # Bigger window
 root.config(bg="#f9f9f9")
 
 # Title
