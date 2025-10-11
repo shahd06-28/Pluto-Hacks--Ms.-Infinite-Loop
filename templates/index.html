@@ -31,6 +31,7 @@ h1 {
 .search-bar {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -43,14 +44,20 @@ h1 {
   background: #fff;
 }
 .search-bar button {
-  background: #283046;
-  color: #fff;
+  background: none;
   border: none;
-  padding: 10px 20px;
-  border-radius: 10px;
+  padding: 0;
   cursor: pointer;
 }
-.search-bar button:hover { background: #47516d; }
+.search-bar button img {
+  width: 45px;
+  height: 45px;
+  image-rendering: pixelated;
+  transition: transform 0.2s ease;
+}
+.search-bar button img:hover {
+  transform: scale(1.1);
+}
 
 .cards {
   display: flex;
@@ -68,9 +75,7 @@ h1 {
   box-shadow: 6px 6px 0 rgba(40,48,70,0.3);
   transition: transform 0.2s ease;
 }
-.card:hover {
-  transform: translateY(-5px);
-}
+.card:hover { transform: translateY(-5px); }
 .card h3 { color: #283046; }
 .card button {
   margin-top: 10px;
@@ -115,7 +120,9 @@ h1 {
 
   <div class="search-bar">
     <input id="keyword" placeholder="Type a keyword (e.g. AI, code)">
-    <button onclick="searchArticles()">Search</button>
+    <button onclick="searchArticles()">
+      <img src="{{ url_for('static', filename='Search_Icon.gif') }}" alt="Search Icon">
+    </button>
   </div>
 
   <div class="cards">
@@ -178,6 +185,7 @@ h1 {
   </script>
 </body>
 </html>
+
 
 
 
