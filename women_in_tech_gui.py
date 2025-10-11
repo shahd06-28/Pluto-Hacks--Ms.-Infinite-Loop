@@ -22,7 +22,7 @@ title_label = tk.Label(
     text="🌸 Women in Tech: Article Explorer",
     font=("Arial", 22, "bold"),
     bg="#f9f9f9",
-    fg="#d63384"
+    fg="#ba7a9a"
 )
 title_label.pack(pady=15)
 
