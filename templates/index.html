@@ -92,20 +92,8 @@ h1 {
 }
 .article { margin-bottom: 15px; text-align: left; }
 .article b { color: #283046; }
-
-#girl-container {
-  position: fixed;
-  bottom: 40px;
-  left: 40px;
-  width: 120px;
-}
-#girl {
-  width: 100%;
-  image-rendering: pixelated;
-}
 </style>
 </head>
-
 <body>
   <h1>Ms. Infinite Loop 🌸</h1>
 
@@ -135,10 +123,6 @@ h1 {
   </div>
 
   <div id="results"><em>Click a category or use the search bar above 💡</em></div>
-
-  <div id="girl-container">
-    <img id="girl" src="/static/final_assets/01-Girl/idle/Girl_idle_pose1.png" alt="Idle Girl">
-  </div>
 
   <script>
   async function fetchArticles(bucket){
@@ -175,16 +159,8 @@ h1 {
           <small>${a.snippet}</small>
         </div>`).join("");
   }
-
-  // Idle character animation
-  let frame = 1;
-  setInterval(() => {
-    frame = frame === 1 ? 2 : 1;
-    document.getElementById("girl").src = `/static/final_assets/01-Girl/idle/Girl_idle_pose${frame}.png`;
-  }, 500);
   </script>
 </body>
 </html>
-
 
 
