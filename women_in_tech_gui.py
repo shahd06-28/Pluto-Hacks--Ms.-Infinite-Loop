@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-from google_search_results import GoogleSearch
+from serpapi import GoogleSearch
 from dotenv import load_dotenv
 import os, random
 
