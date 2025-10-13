@@ -12,6 +12,7 @@ body {
   margin: 0;
   padding: 40px;
   text-align: center;
+  position: relative;
 }
 
 /* --- Title & Logo --- */
@@ -23,7 +24,27 @@ h1 {
   justify-content: center;
   align-items: center;
   gap: 14px;
+  position: relative;
 }
+
+/* Share button (top-right corner) */
+#share-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+}
+#share-button img {
+  width: 40px;
+  height: 40px;
+  image-rendering: pixelated;
+  transition: transform 0.2s ease;
+}
+#share-button img:hover { transform: scale(1.1); }
+
 h1 .logo {
   order: 2;
   width: 80px;
@@ -116,8 +137,6 @@ h1 .logo {
 }
 
 /* --- Independent Layered Elements --- */
-
-/* Girl */
 #pixel-girl {
   position: fixed;
   bottom: 20px;
@@ -126,8 +145,6 @@ h1 .logo {
   image-rendering: pixelated;
   z-index: 10;
 }
-
-/* Bubble */
 #text-box {
   position: fixed;
   bottom: 125px;
@@ -136,33 +153,33 @@ h1 .logo {
   image-rendering: pixelated;
   z-index: 9;
 }
-
-/* Base style for all phrases */
 .phrase {
   position: fixed;
   image-rendering: pixelated;
   z-index: 11;
   display: none;
 }
-
-/* 🔧 Individual fine-tuning — adjust each freely */
-#hello-phrase { bottom: 160px; right: 120px; width: 60px;color:#283046; }
-#spanish-phrase { bottom: 160px; right: 120px; width: 60px; color:#283046; }
-#hindi-phrase { bottom: 156px; right: 115px; width: 74px; color:#283046; }
-#creole-phrase { bottom: 164px; right: 110px; width: 80px; color:#283046; }
-#arabic-phrase { bottom: 159px; right: 110px; width: 65px;color:#283046; }
-#korean-phrase { bottom: 164px; right: 110px; width: 80px;color:#283046; }
-#french-phrase { bottom: 164px; right: 110px; width: 80px; color:#283046;}
-#japanese-phrase { bottom: 164px; right: 110px; width: 80px; color:#283046; }
-#urdu-phrase { bottom: 160px; right: 116px; width: 79px; color:#283046; }
-#chinese-phrase { bottom: 160px; right: 120px; width: 60px; color:#283046; }
-#russian-phrase { bottom: 162px; right: 110px; width: 80px; color:#283046;}
+/* fine-tuning */
+#hello-phrase { bottom:160px; right:120px; width:60px;}
+#spanish-phrase { bottom:160px; right:120px; width:60px;}
+#hindi-phrase { bottom:156px; right:115px; width:74px;}
+#creole-phrase { bottom:164px; right:110px; width:80px;}
+#arabic-phrase { bottom:159px; right:110px; width:65px;}
+#korean-phrase { bottom:164px; right:110px; width:80px;}
+#french-phrase { bottom:164px; right:110px; width:80px;}
+#japanese-phrase { bottom:164px; right:110px; width:80px;}
+#urdu-phrase { bottom:160px; right:116px; width:79px;}
+#chinese-phrase { bottom:160px; right:120px; width:60px;}
+#russian-phrase { bottom:162px; right:110px; width:80px;}
 </style>
 </head>
 <body>
   <h1>
     Ms. Infinite Loop
     <img src="{{ url_for('static', filename='Infinite_Logo.gif') }}" alt="Infinite Logo" class="logo">
+    <button id="share-button" title="Share Results">
+      <img src="{{ url_for('static', filename='share_icon.png') }}" alt="Share">
+    </button>
   </h1>
 
   <div class="description-box" id="desc-box">
@@ -172,7 +189,7 @@ h1 .logo {
 
   <div class="search-bar">
     <input id="keyword" placeholder="Type a keyword (e.g. AI, code)">
-    <button onclick="fetchArticles('present')">
+    <button id="search-button">
       <img src="{{ url_for('static', filename='Search_Icon.gif') }}" alt="Search Icon">
     </button>
   </div>
@@ -195,10 +212,7 @@ h1 .logo {
     </div>
   </div>
 
-  <!-- Independent elements -->
   <img id="text-box" src="{{ url_for('static', filename='text_box.png') }}" alt="Text Bubble">
-
-  <!-- All phrases (you can control size/position per language) -->
   <img id="hello-phrase" class="phrase" src="{{ url_for('static', filename='Hello_phrase.png') }}" alt="Hello">
   <img id="spanish-phrase" class="phrase" src="{{ url_for('static', filename='Spanish_phrase.png') }}" alt="Spanish">
   <img id="hindi-phrase" class="phrase" src="{{ url_for('static', filename='Hindi_phrase.png') }}" alt="Hindi">
@@ -210,91 +224,112 @@ h1 .logo {
   <img id="urdu-phrase" class="phrase" src="{{ url_for('static', filename='Urdu_phrase.png') }}" alt="Urdu">
   <img id="chinese-phrase" class="phrase" src="{{ url_for('static', filename='Chinese_phrase.png') }}" alt="Chinese">
   <img id="russian-phrase" class="phrase" src="{{ url_for('static', filename='Russian_phrase.png') }}" alt="Russian">
-
   <img id="pixel-girl" src="{{ url_for('static', filename='Girl_Idle_pose1.png') }}" alt="Pixel Girl">
 
-  <script>
-  let keywordAccepted = false;
+<script>
+let keywordAccepted = false;
 
-  async function fetchArticles(bucket){
-    const query = document.getElementById("keyword").value.trim();
-    if (!query) { alert("Please type a keyword first!"); return; }
-    if (!keywordAccepted) { alert("Press Enter first to confirm your keyword!"); return; }
+async function fetchArticles(bucket){
+  const query = document.getElementById("keyword").value.trim();
+  if (!query) { alert("Please type a keyword first!"); return; }
+  if (!keywordAccepted) { alert("Press Enter or click the Search Icon to confirm your keyword!"); return; }
 
-    const res = await fetch("/articles", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({bucket, query})
-    });
-    let data = await res.json();
-
-    for (let i = data.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [data[i], data[j]] = [data[j], data[i]];
-    }
-
-    renderResults(data, bucket);
-  }
-
-  function renderResults(data, bucket){
-    const descBox = document.getElementById("desc-box");
-    if(!data.length){
-      descBox.innerHTML = `<p><b>No results found for "${bucket}".</b></p>`;
-      return;
-    }
-    descBox.innerHTML = `<h3>Top 3 results for ${bucket}</h3>` +
-      data.map(a=>`
-        <div class="article">
-          <b><a href="${a.link}" target="_blank">${a.title}</a></b><br>
-          <small>${a.snippet}</small>
-        </div>`).join("");
-  }
-
-  const input = document.getElementById("keyword");
-  const descBox = document.getElementById("desc-box");
-  const acceptedMsg = `
-    <p><b>Key Word Accepted!</b><br>
-    Click <b>Past</b>, <b>Present</b>, or <b>Future</b> to explore and see Ms. Infinite Loop’s results ↑↑↑</p>
-  `;
-  input.addEventListener("keydown", (e)=>{
-    if (e.key === "Enter") {
-      const q = input.value.trim();
-      if (!q) { alert("Please type a keyword first!"); return; }
-      keywordAccepted = true;
-      descBox.innerHTML = acceptedMsg;
-    }
+  const res = await fetch("/articles", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({bucket, query})
   });
+  let data = await res.json();
 
-  // --- Idle Animation ---
-  let currentPose = 1;
-  setInterval(() => {
-    const girl = document.getElementById("pixel-girl");
-    if (!girl) return;
-    currentPose = currentPose === 1 ? 2 : 1;
-    girl.src = `/static/Girl_Idle_pose${currentPose}.png`;
-  }, 600);
-
-  // --- Greeting rotation for individual phrases ---
-  const phraseOrder = [
-    "hello-phrase","spanish-phrase","hindi-phrase","creole-phrase",
-    "arabic-phrase","korean-phrase","french-phrase","japanese-phrase",
-    "urdu-phrase","chinese-phrase","russian-phrase"
-  ];
-  let current = 0;
-
-  function showPhrase(index) {
-    phraseOrder.forEach(id => document.getElementById(id).style.display = "none");
-    document.getElementById(phraseOrder[index]).style.display = "block";
+  for (let i = data.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [data[i], data[j]] = [data[j], data[i]];
   }
+  renderResults(data, bucket);
+}
 
+function renderResults(data, bucket){
+  const descBox = document.getElementById("desc-box");
+  if(!data.length){
+    descBox.innerHTML = `<p><b>No results found for "${bucket}".</b></p>`;
+    return;
+  }
+  descBox.innerHTML = `<h3>Top 3 results for ${bucket}</h3>` +
+    data.map(a=>`
+      <div class="article">
+        <b><a href="${a.link}" target="_blank">${a.title}</a></b><br>
+        <small>${a.snippet}</small>
+      </div>`).join("");
+}
+
+/* confirm keyword */
+const input = document.getElementById("keyword");
+const descBox = document.getElementById("desc-box");
+const acceptedMsg = `
+  <p><b>Key Word Accepted!</b><br>
+  Click <b>Past</b>, <b>Present</b>, or <b>Future</b> to explore and see Ms. Infinite Loop’s results ↑↑↑</p>
+`;
+function confirmKeyword() {
+  const q = input.value.trim();
+  if (!q) { alert("Please type a keyword first!"); return; }
+  keywordAccepted = true;
+  descBox.innerHTML = acceptedMsg;
+}
+input.addEventListener("keydown", (e)=>{ if (e.key === "Enter") confirmKeyword(); });
+document.getElementById("search-button").addEventListener("click", confirmKeyword);
+
+/* share button logic */
+document.getElementById("share-button").addEventListener("click", async ()=>{
+  const descContent = document.getElementById("desc-box").innerText.trim();
+  const shareData = {
+    title: "Ms. Infinite Loop Results",
+    text: descContent || "Discover inspiring stories of women in tech!",
+    url: window.location.href
+  };
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else {
+      await navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`);
+      alert("Results copied to clipboard!");
+    }
+  } catch (err) {
+    console.error("Share failed:", err);
+  }
+});
+
+/* idle animation */
+let currentPose = 1;
+setInterval(() => {
+  const girl = document.getElementById("pixel-girl");
+  if (!girl) return;
+  currentPose = currentPose === 1 ? 2 : 1;
+  girl.src = `/static/Girl_Idle_pose${currentPose}.png`;
+}, 600);
+
+/* greeting rotation */
+const phraseOrder = [
+  "hello-phrase","spanish-phrase","hindi-phrase","creole-phrase",
+  "arabic-phrase","korean-phrase","french-phrase","japanese-phrase",
+  "urdu-phrase","chinese-phrase","russian-phrase"
+];
+let current = 0;
+function showPhrase(index) {
+  phraseOrder.forEach(id => document.getElementById(id).style.display = "none");
+  document.getElementById(phraseOrder[index]).style.display = "block";
+}
+showPhrase(current);
+setInterval(() => {
+  current = (current + 1) % phraseOrder.length;
   showPhrase(current);
-  setInterval(() => {
-    current = (current + 1) % phraseOrder.length;
-    showPhrase(current);
-  }, 3000);
-  </script>
+}, 3000);
+</script>
 </body>
 </html>
+
+
+
+
 
 
 
