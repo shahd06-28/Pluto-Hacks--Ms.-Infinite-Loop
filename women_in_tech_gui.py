@@ -21,7 +21,6 @@ def get_articles():
     if not query:
         return jsonify([])
 
-    # Add randomness for fresh results
     params = {
         "engine": "google",
         "q": f"women in tech {query} {bucket} {random.choice(['innovation','leadership','future','research','success','inspiration'])}",

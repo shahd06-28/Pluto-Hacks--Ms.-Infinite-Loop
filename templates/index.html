@@ -14,7 +14,7 @@ body {
   text-align: center;
 }
 
-/* Title and logo */
+/* --- Title & Logo --- */
 h1 {
   font-size: 32px;
   color: #283046;
@@ -36,7 +36,7 @@ h1 .logo {
   50% { transform: translateY(-4px); }
 }
 
-/* Main content box */
+/* --- Main content box --- */
 .description-box {
   background: #fff;
   border: 4px solid #283046;
@@ -48,7 +48,7 @@ h1 .logo {
   box-shadow: 6px 6px 0 rgba(40,48,70,0.3);
 }
 
-/* Search bar */
+/* --- Search bar --- */
 .search-bar {
   display: flex;
   justify-content: center;
@@ -78,7 +78,7 @@ h1 .logo {
 }
 .search-bar button img:hover { transform: scale(1.1); }
 
-/* Cards */
+/* --- Cards --- */
 .cards {
   display: flex;
   justify-content: center;
@@ -115,21 +115,48 @@ h1 .logo {
   margin-bottom: 10px;
 }
 
-/* Articles */
-.article { margin-bottom: 15px; text-align: left; }
-.article b a { color: #283046; text-decoration: none; }
-.article b a:hover { text-decoration: underline; }
+/* --- Independent Layered Elements --- */
 
-/* Pixel girl */
+/* Girl */
 #pixel-girl {
   position: fixed;
   bottom: 20px;
-  right: 20px;
-  width: 120px;
+  right: 30px;
+  width: 110px;
   image-rendering: pixelated;
-  pointer-events: none;
-  z-index: 9999;
+  z-index: 10;
 }
+
+/* Bubble */
+#text-box {
+  position: fixed;
+  bottom: 125px;
+  right: 90px;
+  width: 130px;
+  image-rendering: pixelated;
+  z-index: 9;
+}
+
+/* Base style for all phrases */
+.phrase {
+  position: fixed;
+  image-rendering: pixelated;
+  z-index: 11;
+  display: none;
+}
+
+/* 🔧 Individual fine-tuning — adjust each freely */
+#hello-phrase { bottom: 160px; right: 120px; width: 60px;color:#283046; }
+#spanish-phrase { bottom: 160px; right: 120px; width: 60px; color:#283046; }
+#hindi-phrase { bottom: 156px; right: 115px; width: 74px; color:#283046; }
+#creole-phrase { bottom: 164px; right: 110px; width: 80px; color:#283046; }
+#arabic-phrase { bottom: 159px; right: 110px; width: 65px;color:#283046; }
+#korean-phrase { bottom: 164px; right: 110px; width: 80px;color:#283046; }
+#french-phrase { bottom: 164px; right: 110px; width: 80px; color:#283046;}
+#japanese-phrase { bottom: 164px; right: 110px; width: 80px; color:#283046; }
+#urdu-phrase { bottom: 160px; right: 116px; width: 79px; color:#283046; }
+#chinese-phrase { bottom: 160px; right: 120px; width: 60px; color:#283046; }
+#russian-phrase { bottom: 162px; right: 110px; width: 80px; color:#283046;}
 </style>
 </head>
 <body>
@@ -156,19 +183,33 @@ h1 .logo {
       <img src="{{ url_for('static', filename='Past.gif') }}" alt="Past Girl">
       <button onclick="fetchArticles('past')">Explore Past</button>
     </div>
-
     <div class="card">
       <h3>Present</h3>
       <img src="{{ url_for('static', filename='Present.gif') }}" alt="Present Girl">
       <button onclick="fetchArticles('present')">Explore Present</button>
     </div>
-
     <div class="card">
       <h3>Future</h3>
       <img src="{{ url_for('static', filename='Future.gif') }}" alt="Future Girl">
       <button onclick="fetchArticles('future')">Explore Future</button>
     </div>
   </div>
+
+  <!-- Independent elements -->
+  <img id="text-box" src="{{ url_for('static', filename='text_box.png') }}" alt="Text Bubble">
+
+  <!-- All phrases (you can control size/position per language) -->
+  <img id="hello-phrase" class="phrase" src="{{ url_for('static', filename='Hello_phrase.png') }}" alt="Hello">
+  <img id="spanish-phrase" class="phrase" src="{{ url_for('static', filename='Spanish_phrase.png') }}" alt="Spanish">
+  <img id="hindi-phrase" class="phrase" src="{{ url_for('static', filename='Hindi_phrase.png') }}" alt="Hindi">
+  <img id="creole-phrase" class="phrase" src="{{ url_for('static', filename='Creole_phrase.png') }}" alt="Creole">
+  <img id="arabic-phrase" class="phrase" src="{{ url_for('static', filename='Arabic_phrase.png') }}" alt="Arabic">
+  <img id="korean-phrase" class="phrase" src="{{ url_for('static', filename='Korean_phrase.png') }}" alt="Korean">
+  <img id="french-phrase" class="phrase" src="{{ url_for('static', filename='French_phrase.png') }}" alt="French">
+  <img id="japanese-phrase" class="phrase" src="{{ url_for('static', filename='Japanese_phrase.png') }}" alt="Japanese">
+  <img id="urdu-phrase" class="phrase" src="{{ url_for('static', filename='Urdu_phrase.png') }}" alt="Urdu">
+  <img id="chinese-phrase" class="phrase" src="{{ url_for('static', filename='Chinese_phrase.png') }}" alt="Chinese">
+  <img id="russian-phrase" class="phrase" src="{{ url_for('static', filename='Russian_phrase.png') }}" alt="Russian">
 
   <img id="pixel-girl" src="{{ url_for('static', filename='Girl_Idle_pose1.png') }}" alt="Pixel Girl">
 
@@ -177,15 +218,8 @@ h1 .logo {
 
   async function fetchArticles(bucket){
     const query = document.getElementById("keyword").value.trim();
-    if (!query) {
-      alert("Please type a keyword first!");
-      return;
-    }
-
-    if (!keywordAccepted) {
-      alert("Press Enter first to confirm your keyword!");
-      return;
-    }
+    if (!query) { alert("Please type a keyword first!"); return; }
+    if (!keywordAccepted) { alert("Press Enter first to confirm your keyword!"); return; }
 
     const res = await fetch("/articles", {
       method: "POST",
@@ -194,7 +228,6 @@ h1 .logo {
     });
     let data = await res.json();
 
-    // Shuffle for randomness
     for (let i = data.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [data[i], data[j]] = [data[j], data[i]];
@@ -209,7 +242,6 @@ h1 .logo {
       descBox.innerHTML = `<p><b>No results found for "${bucket}".</b></p>`;
       return;
     }
-
     descBox.innerHTML = `<h3>Top 3 results for ${bucket}</h3>` +
       data.map(a=>`
         <div class="article">
@@ -218,39 +250,52 @@ h1 .logo {
         </div>`).join("");
   }
 
-  // --- Enter confirms keyword (no fetch yet) ---
   const input = document.getElementById("keyword");
   const descBox = document.getElementById("desc-box");
   const acceptedMsg = `
     <p><b>Key Word Accepted!</b><br>
     Click <b>Past</b>, <b>Present</b>, or <b>Future</b> to explore and see Ms. Infinite Loop’s results ↑↑↑</p>
   `;
-
   input.addEventListener("keydown", (e)=>{
     if (e.key === "Enter") {
       const q = input.value.trim();
-      if (!q) {
-        alert("Please type a keyword first!");
-        return;
-      }
+      if (!q) { alert("Please type a keyword first!"); return; }
       keywordAccepted = true;
       descBox.innerHTML = acceptedMsg;
     }
   });
 
-  // Idle animation
+  // --- Idle Animation ---
   let currentPose = 1;
   setInterval(() => {
     const girl = document.getElementById("pixel-girl");
     if (!girl) return;
     currentPose = currentPose === 1 ? 2 : 1;
-    girl.src = currentPose === 1
-      ? "{{ url_for('static', filename='Girl_Idle_pose1.png') }}"
-      : "{{ url_for('static', filename='Girl_Idle_pose2.png') }}";
+    girl.src = `/static/Girl_Idle_pose${currentPose}.png`;
   }, 600);
+
+  // --- Greeting rotation for individual phrases ---
+  const phraseOrder = [
+    "hello-phrase","spanish-phrase","hindi-phrase","creole-phrase",
+    "arabic-phrase","korean-phrase","french-phrase","japanese-phrase",
+    "urdu-phrase","chinese-phrase","russian-phrase"
+  ];
+  let current = 0;
+
+  function showPhrase(index) {
+    phraseOrder.forEach(id => document.getElementById(id).style.display = "none");
+    document.getElementById(phraseOrder[index]).style.display = "block";
+  }
+
+  showPhrase(current);
+  setInterval(() => {
+    current = (current + 1) % phraseOrder.length;
+    showPhrase(current);
+  }, 3000);
   </script>
 </body>
 </html>
+
 
 
 
