@@ -76,9 +76,7 @@ h1 .logo {
   image-rendering: pixelated;
   transition: transform 0.2s ease;
 }
-.search-bar button img:hover {
-  transform: scale(1.1);
-}
+.search-bar button img:hover { transform: scale(1.1); }
 
 /* Cards */
 .cards {
@@ -117,22 +115,12 @@ h1 .logo {
   margin-bottom: 10px;
 }
 
-/* Results */
-#results {
-  margin-top: 40px;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-  background: #fff;
-  border: 3px solid #283046;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 8px 8px 0 rgba(40,48,70,0.2);
-}
+/* Articles */
 .article { margin-bottom: 15px; text-align: left; }
-.article b { color: #283046; }
+.article b a { color: #283046; text-decoration: none; }
+.article b a:hover { text-decoration: underline; }
 
-/* Pixel girl bottom-right */
+/* Pixel girl */
 #pixel-girl {
   position: fixed;
   bottom: 20px;
@@ -150,14 +138,14 @@ h1 .logo {
     <img src="{{ url_for('static', filename='Infinite_Logo.gif') }}" alt="Infinite Logo" class="logo">
   </h1>
 
-  <div class="description-box">
+  <div class="description-box" id="desc-box">
     <p><b>Ready to discover some brilliance?</b><br>
     Ask me a keyword or click the button to uncover sparkling stories of women in tech from the <b>Past</b>, <b>Present</b>, and <b>Future!</b></p>
   </div>
 
   <div class="search-bar">
     <input id="keyword" placeholder="Type a keyword (e.g. AI, code)">
-    <button onclick="searchArticles()">
+    <button onclick="fetchArticles('present')">
       <img src="{{ url_for('static', filename='Search_Icon.gif') }}" alt="Search Icon">
     </button>
   </div>
@@ -182,49 +170,75 @@ h1 .logo {
     </div>
   </div>
 
-  <div id="results"><em>Click a category or use the search bar above 💡</em></div>
-
-  <!-- Pixel Girl Idle Animation -->
   <img id="pixel-girl" src="{{ url_for('static', filename='Girl_Idle_pose1.png') }}" alt="Pixel Girl">
 
   <script>
-  // Article logic
+  let keywordAccepted = false;
+
   async function fetchArticles(bucket){
+    const query = document.getElementById("keyword").value.trim();
+    if (!query) {
+      alert("Please type a keyword first!");
+      return;
+    }
+
+    if (!keywordAccepted) {
+      alert("Press Enter first to confirm your keyword!");
+      return;
+    }
+
     const res = await fetch("/articles", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({bucket})
+      body: JSON.stringify({bucket, query})
     });
-    const data = await res.json();
+    let data = await res.json();
+
+    // Shuffle for randomness
+    for (let i = data.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [data[i], data[j]] = [data[j], data[i]];
+    }
+
     renderResults(data, bucket);
   }
 
-  async function searchArticles(){
-    const query = document.getElementById("keyword").value.trim();
-    const res = await fetch("/articles", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({bucket: "all", query})
-    });
-    const data = await res.json();
-    renderResults(data, "search");
-  }
-
   function renderResults(data, bucket){
-    const results = document.getElementById("results");
+    const descBox = document.getElementById("desc-box");
     if(!data.length){
-      results.innerHTML = `<p><b>No results found for "${bucket}"</b></p>`;
+      descBox.innerHTML = `<p><b>No results found for "${bucket}".</b></p>`;
       return;
     }
-    results.innerHTML = `<h3>Results for ${bucket}</h3>` +
+
+    descBox.innerHTML = `<h3>Top 3 results for ${bucket}</h3>` +
       data.map(a=>`
         <div class="article">
-          <b>${a.title}</b><br>
+          <b><a href="${a.link}" target="_blank">${a.title}</a></b><br>
           <small>${a.snippet}</small>
         </div>`).join("");
   }
 
-  // Idle animation logic
+  // --- Enter confirms keyword (no fetch yet) ---
+  const input = document.getElementById("keyword");
+  const descBox = document.getElementById("desc-box");
+  const acceptedMsg = `
+    <p><b>Key Word Accepted!</b><br>
+    Click <b>Past</b>, <b>Present</b>, or <b>Future</b> to explore and see Ms. Infinite Loop’s results ↑↑↑</p>
+  `;
+
+  input.addEventListener("keydown", (e)=>{
+    if (e.key === "Enter") {
+      const q = input.value.trim();
+      if (!q) {
+        alert("Please type a keyword first!");
+        return;
+      }
+      keywordAccepted = true;
+      descBox.innerHTML = acceptedMsg;
+    }
+  });
+
+  // Idle animation
   let currentPose = 1;
   setInterval(() => {
     const girl = document.getElementById("pixel-girl");
@@ -233,10 +247,14 @@ h1 .logo {
     girl.src = currentPose === 1
       ? "{{ url_for('static', filename='Girl_Idle_pose1.png') }}"
       : "{{ url_for('static', filename='Girl_Idle_pose2.png') }}";
-  }, 600); // switch every 0.6 seconds
+  }, 600);
   </script>
 </body>
 </html>
+
+
+
+
 
 
 
